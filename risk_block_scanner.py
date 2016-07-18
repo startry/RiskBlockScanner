@@ -100,7 +100,7 @@ def detect_block(file_path):
                     break
 
                 if cycref_map[potential_lc]==0:
-                    if re.findall(ur"(\[self\s|self\.)", line):
+                    if re.findall(ur"(\[self\s|self\.|make.*\(self\))", line):
                         cycref_map[potential_lc]=1
 
                 # if file_name(file_path)=="SDDJOperationCellTimesMode.m":
@@ -136,6 +136,7 @@ def detect_block(file_path):
     if show_detail==1:
         show_detail_info(file_path, unsafe_arr, block_arr, list(cycref_set), list(weakified_set))
 
+    unsafe_arr.sort()
     return unsafe_arr
 
 def show_detail_info(file_path, unsafe_arr, block_arr, cycref_arr, weakified_arr):
