@@ -18,7 +18,7 @@ import fileinput
 weak_regex=ur"(\@weakify\(.*\)|\_\_weak(.*)typeof\(self\))"
 block_regex=ur"(self\..*\=\s?\^|\[self.*\^)\(.*\).*\{?"
 func_regex=ur"(\-|\+)\s?\(.*\).*(\:\s?\(.*\).*)?{?"
-singleton_regex=ur"(\+\s?\(.*\)\s?shared.*{?|.*SINGLETON\_FOR\_CLASS\(.*\))"
+singleton_regex=ur"(\+\s?\(.*\)\s?(shared|default).*{?|.*SINGLETON\_FOR\_CLASS\(.*\))"
 
 show_detail=0
 show_more=0
