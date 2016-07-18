@@ -16,11 +16,13 @@ import sys
 import fileinput
 
 weak_regex=ur"(\@weakify\(.*\)|\_\_weak(.*)typeof\(self\))"
-block_regex=ur"(\=\s?\^|\[self.*\^)\(.*\).*\{?"
+block_regex=ur"(self\..*\=\s?\^|\[self.*\^)\(.*\).*\{?"
 func_regex=ur"(\-|\+)\s?\(.*\).*(\:\s?\(.*\).*)?{?"
+singleton_regex=ur"(\+\s?\(.*\)\s?shared.*{?|.*SINGLETON\_FOR\_CLASS\(.*\))"
 
 show_detail=0
 show_more=0
+show_singleton=0
 
 def scan_files(directory,prefix=None,postfix=None):  
     files_list=[]  
@@ -49,6 +51,11 @@ def left_bracket_count(line):
     return count;
 
 def detect_block(file_path):
+
+    global show_detail
+    global show_singleton
+
+
     line_count=1
     
     block_arr=[] 
@@ -60,6 +67,7 @@ def detect_block(file_path):
 
     cycref_map={}
     bracket_map={}
+    is_singleton=0
 
     for line in fileinput.input(file_path):
         # comments code is invalid
@@ -75,6 +83,9 @@ def detect_block(file_path):
 
                 bracket_map[line_count] = left_bracket_count(line);
                 cycref_map[line_count] = 0;
+
+            if re.findall(singleton_regex, line):
+                is_singleton=1
 
             for potential_lc in potential_arr:
                 if potential_lc==line_count:
@@ -119,8 +130,9 @@ def detect_block(file_path):
 
     #except for block which weak before perform
     unsafe_arr=list(cycref_set.difference(weakified_set))
+    if show_singleton==0 and is_singleton==1:
+        unsafe_arr=[]
 
-    global show_detail
     if show_detail==1:
         show_detail_info(file_path, unsafe_arr, block_arr, list(cycref_set), list(weakified_set))
 
@@ -155,11 +167,14 @@ def main():
 
     global show_detail
     global show_more
+    global show_singleton
     for arg in sys.argv:
         if arg=="--detail":
             show_detail=1
         elif arg=="--more":
             show_more=1
+        elif arg=="--show-singleton":
+            show_singleton=1
 
     total_file_count=0
     total_risk_block_count=0

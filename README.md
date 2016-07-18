@@ -27,12 +27,20 @@ python risk_block_scanner.py [目标文件]
 ```
 
 #### Optional
-* ```--detail``` show detail info of risk files
-* ```--more```   show detail info of all files
-
+* ```--detail```         
+	* show detail info of risk files
+* ```--more```          
+	* show detail info of all files
+* ```--show-singleton``` 
+	* singleton is excluded default. use `--show-singleton` to make singleton be included.
+	
 #### 可选参数
-* ```--detail``` 显示潜在循环引用文件的详细信息
-* ```--more```   显示所有文件的详细信息
+* ```--detail``` 
+	* 显示潜在循环引用文件的详细信息
+* ```--more```   
+	* 显示所有文件的详细信息
+* ```--show-singleton```
+	* 默认情况下, 单例类的循环引用默认是安全的; 可以通过该参数让单例类的循环引用也和普通类一同处理扫描;
 
 ## Requirement
 
