@@ -91,10 +91,6 @@ def detect_block(file_path):
                 if potential_lc==line_count:
                     continue
 
-                if cycref_map[potential_lc]==0:
-                    if re.findall(ur"(\[self\s|self\.)", line):
-                        cycref_map[potential_lc]=1
-
                 bracket_map[potential_lc]=bracket_map[potential_lc]+left_bracket_count(line)
                 if bracket_map[potential_lc]<=0:
                     if cycref_map[potential_lc]==1:
@@ -102,6 +98,10 @@ def detect_block(file_path):
                     else:
                         safe_set.add(potential_lc)
                     break
+
+                if cycref_map[potential_lc]==0:
+                    if re.findall(ur"(\[self\s|self\.)", line):
+                        cycref_map[potential_lc]=1
 
                 # if file_name(file_path)=="SDDJOperationCellTimesMode.m":
                 #     print bracket_map[potential_lc]
