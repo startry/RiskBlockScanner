@@ -18,6 +18,8 @@ Detect Simple Self-Block Cycle Reference by scan code files.
 
 检查最简单的被self引用的block内部使用self导致的循环引用
 
+![test](./demo.png)
+
 ## Usage
 
 ``` Swift

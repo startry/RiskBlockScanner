@@ -62,7 +62,7 @@ def detect_block(file_path):
     bracket_map={}
 
     for line in fileinput.input(file_path):
-        # comments code is valid
+        # comments code is invalid
         # object-c comments is startswith "//"
         if not line.strip().startswith("//"):
             if re.findall(weak_regex, line):
@@ -81,7 +81,7 @@ def detect_block(file_path):
                     continue
 
                 if cycref_map[potential_lc]==0:
-                    if re.findall(ur"self", line):
+                    if re.findall(ur"(\[self\s|self\.)", line):
                         cycref_map[potential_lc]=1
 
                 bracket_map[potential_lc]=bracket_map[potential_lc]+left_bracket_count(line)
