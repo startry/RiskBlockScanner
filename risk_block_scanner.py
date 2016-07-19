@@ -103,9 +103,6 @@ def detect_block(file_path):
                     if re.findall(ur"(\[self\s|self\.|make.*\(self\))", line):
                         cycref_map[potential_lc]=1
 
-                # if file_name(file_path)=="SDDJOperationCellTimesMode.m":
-                #     print bracket_map[potential_lc]
-
             # remove potential_arr if it's not cycle reference
             potential_arr = list(set(potential_arr).difference(cycref_set))
             potential_arr = list(set(potential_arr).difference(safe_set))
