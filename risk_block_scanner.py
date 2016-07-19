@@ -174,19 +174,27 @@ def main():
         elif arg=="--show-singleton":
             show_singleton=1
 
-    total_file_count=0
-    total_risk_block_count=0
+    if os.path.isdir(root_path):
+        total_risk_block_count=0
+        total_file_count=0
+        for file_path in scan_files(root_path, None, ".m"):
+            risk_arr=detect_block(file_path)
+            risk_arr_len = len(risk_arr)
+            if risk_arr_len:
+                total_file_count=total_file_count+1
+                total_risk_block_count=total_risk_block_count+risk_arr_len
 
-    for file_path in scan_files(root_path, None, ".m"):
-        risk_arr=detect_block(file_path)
+                if not show_detail:
+                    print "%s --> %s" % (file_name(file_path), risk_arr)
+
+        print "\nTotal Risk File Count: %d, Total Risk Line Count: %s" % (total_file_count, total_risk_block_count)
+    else:
+        risk_arr=detect_block(root_path)
         risk_arr_len = len(risk_arr)
-        if risk_arr_len:
-            total_file_count=total_file_count+1
-            total_risk_block_count=total_risk_block_count+risk_arr_len
 
-            if not show_detail:
-                print "%s --> %s" % (file_name(file_path), risk_arr)
+        if not show_detail:
+            print "%s --> %s" % (file_name(root_path), risk_arr)
 
-    print "\nTotal Risk File Count: %d, Total Risk Line Count: %s" % (total_file_count, total_risk_block_count)
+        print "\nTotal Risk Line Count: %s" % risk_arr_len
 
 main()
