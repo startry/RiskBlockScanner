@@ -19,6 +19,7 @@ weak_regex=ur"(\@weakify\(.*\)|\_\_weak(.*)typeof\(self\))"
 block_regex=ur"(self\..*\=\s?\^|\[self.*\^)\(.*\).*\{?"
 func_regex=ur"(\-|\+)\s?\(.*\).*(\:\s?\(.*\).*)?{?"
 singleton_regex=ur"(\+\s?\(.*\)\s?(shared|default).*{?|.*SINGLETON\_FOR\_CLASS\(.*\))"
+masonry_regex=ur"mas_.*Constraints\:"
 
 show_detail=0
 show_more=0
@@ -79,7 +80,11 @@ def detect_block(file_path):
                 func_arr.append(line_count)
             elif re.findall(block_regex, line):
                 block_arr.append(line_count);
-                potential_arr.append(line_count);
+
+                if not re.findall(masonry_regex, line):
+                    potential_arr.append(line_count);
+                else:
+                    safe_set.add(line_count);
 
                 bracket_map[line_count] = left_bracket_count(line);
                 cycref_map[line_count] = 0;
