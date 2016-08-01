@@ -21,6 +21,10 @@ func_regex=ur"(\-|\+)\s?\(.*\).*(\:\s?\(.*\).*)?{?"
 singleton_regex=ur"(\+\s?\(.*\)\s?(shared|default).*{?|.*SINGLETON\_FOR\_CLASS\(.*\))"
 masonry_regex=ur"mas_.*Constraints\:"
 
+## \n problem case
+break_line_start_regex=ur"(self\..*\=|\[self.*)"
+break_line_end_regex=ur"\^(\(.*\))?.*\{"
+
 show_detail=0
 show_more=0
 show_singleton=0
@@ -58,6 +62,8 @@ def detect_block(file_path):
 
 
     line_count=1
+
+    potential_blc=0
     
     block_arr=[] 
     weak_arr=[] 
@@ -78,16 +84,30 @@ def detect_block(file_path):
                 weak_arr.append(line_count)
             elif re.findall(func_regex, line):
                 func_arr.append(line_count)
-            elif re.findall(block_regex, line):
-                block_arr.append(line_count);
+            elif re.findall(break_line_start_regex, line):
+                if re.findall(block_regex, line):
+                    block_arr.append(line_count);
 
-                if not re.findall(masonry_regex, line):
+                    if not re.findall(masonry_regex, line):
+                        potential_arr.append(line_count);
+                    else:
+                        safe_set.add(line_count);
+
+                    bracket_map[line_count] = left_bracket_count(line);
+                    cycref_map[line_count] = 0;
+                elif not re.findall(ur"(\;|\&\&|\{)$", line): 
+                    potential_blc = line_count
+
+            if potential_blc > 0:
+                if re.findall(break_line_end_regex, line):
                     potential_arr.append(line_count);
-                else:
-                    safe_set.add(line_count);
+                    block_arr.append(line_count);
+                    bracket_map[line_count] = left_bracket_count(line);
+                    cycref_map[line_count] = 0;
+                    potential_blc = 0
 
-                bracket_map[line_count] = left_bracket_count(line);
-                cycref_map[line_count] = 0;
+                elif re.findall(ur"(\;|\&\&|\{)$", line) or re.findall(func_regex, line):
+                    potential_blc = 0
 
             if re.findall(singleton_regex, line):
                 is_singleton=1
@@ -98,6 +118,7 @@ def detect_block(file_path):
 
                 bracket_map[potential_lc]=bracket_map[potential_lc]+left_bracket_count(line)
                 if bracket_map[potential_lc]<=0:
+
                     if cycref_map[potential_lc]==1:
                         cycref_set.add(potential_lc)
                     else:
@@ -105,6 +126,7 @@ def detect_block(file_path):
                     break
 
                 if cycref_map[potential_lc]==0:
+
                     if re.findall(ur"(\[self\s|self\.|make.*\(self\))", line):
                         cycref_map[potential_lc]=1
 
@@ -132,6 +154,7 @@ def detect_block(file_path):
 
     #except for block which weak before perform
     unsafe_arr=list(cycref_set.difference(weakified_set))
+
     if show_singleton==0 and is_singleton==1:
         unsafe_arr=[]
 
