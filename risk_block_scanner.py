@@ -19,7 +19,7 @@ weak_regex=ur"\@weakify\(.*\)"
 block_regex=ur"(self\..*\=\s?(.*)?\^|\[self.*\^)\(.*\).*\{?"
 func_regex=ur"(\-|\+)\s?\(.*\).*(\:\s?\(.*\).*)?{?"
 singleton_regex=ur"(\+\s?\(.*\)\s?(shared|default).*{?|.*SINGLETON\_FOR\_CLASS\(.*\))"
-masonry_regex=ur"mas_.*Constraints\:"
+ignore_regex=ur"(mas_.*Constraints\:|enumerateObjectsUsingBlock\:|enumerateAttribute\:)"
 
 ## \n problem case
 break_line_start_regex=ur"(self\..*\=|\[self.*)"
@@ -88,7 +88,7 @@ def detect_block(file_path):
                 if re.findall(block_regex, line):
                     block_arr.append(line_count);
 
-                    if not re.findall(masonry_regex, line):
+                    if not re.findall(ignore_regex, line):
                         potential_arr.append(line_count);
                     else:
                         safe_set.add(line_count);
