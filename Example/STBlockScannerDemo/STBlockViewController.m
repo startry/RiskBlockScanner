@@ -7,6 +7,7 @@
 //
 
 #import "STBlockViewController.h"
+#import "STRetainTestViewController.h"
 #import <libextobjc/EXTScope.h>
 
 @implementation STBlockViewController
@@ -14,6 +15,16 @@
 - (void) viewDidLoad {
     [super viewDidLoad];
     NSLog(@"Run risk_block_scanner.py by CMD");
+    
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(100, 200, 100, 100)];
+    [button setTitle:@"test" forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    
+    [self.view addSubview:button];
+    
+    [button addTarget:self action:@selector(didPushView:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void) blockFunc {
@@ -77,6 +88,11 @@
 
 - (void) doAnyThing {
     NSLog(@"doAnyThing");
+}
+
+- (void) didPushView:(id)sender {
+    STRetainTestViewController * vc = [[STRetainTestViewController alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 @end
