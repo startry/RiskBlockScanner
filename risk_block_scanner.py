@@ -16,7 +16,7 @@ import sys
 import fileinput
 
 weak_regex=ur"\@weakify\(.*\)"
-block_regex=ur"(self\..*\=\s?\^|\[self.*\^)\(.*\).*\{?"
+block_regex=ur"(self\..*\=\s?(.*)?\^|\[self.*\^)\(.*\).*\{?"
 func_regex=ur"(\-|\+)\s?\(.*\).*(\:\s?\(.*\).*)?{?"
 singleton_regex=ur"(\+\s?\(.*\)\s?(shared|default).*{?|.*SINGLETON\_FOR\_CLASS\(.*\))"
 masonry_regex=ur"mas_.*Constraints\:"
