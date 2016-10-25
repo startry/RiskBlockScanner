@@ -33,6 +33,8 @@ python risk_block_scanner.py [目标文件]
 	* show detail info of all files
 * ```--show-singleton``` 
 	* singleton is excluded default. use `--show-singleton` to make singleton be included.
+* ```--show-filepath```
+	* show whole filepath replace filename
 	
 #### 可选参数
 * ```--detail``` 
@@ -41,6 +43,8 @@ python risk_block_scanner.py [目标文件]
 	* 显示所有文件的详细信息
 * ```--show-singleton```
 	* 默认情况下, 单例类的循环引用默认是安全的; 可以通过该参数让单例类的循环引用也和普通类一同处理扫描;
+* ```--show-filepath```
+	* 显示完整路径名, 防止同名文件误导
 
 ## Requirement
 
