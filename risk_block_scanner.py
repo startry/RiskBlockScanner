@@ -21,13 +21,14 @@ func_regex=ur"(\-|\+)\s?\(.*\).*(\:\s?\(.*\).*)?{?"
 singleton_regex=ur"(\+\s?\(.*\)\s?(shared|default).*{?|.*SINGLETON\_FOR\_CLASS\(.*\))"
 ignore_regex=ur"(mas_.*Constraints\:|enumerateObjectsUsingBlock\:|enumerateAttribute\:)"
 
-## \n problem case
+## Multi-lines case is hard to cover. 
 break_line_start_regex=ur"(self\..*\=|\[self.*)"
 break_line_end_regex=ur"\^(\(.*\))?.*\{"
 
 show_detail=0
 show_more=0
 show_singleton=0
+show_file_path=0
 
 def scan_files(directory,prefix=None,postfix=None):  
     files_list=[]  
@@ -166,6 +167,7 @@ def detect_block(file_path):
 
 def show_detail_info(file_path, unsafe_arr, block_arr, cycref_arr, weakified_arr):
     global show_more
+    global show_file_path
 
     cycref_arr.sort()
     weakified_arr.sort()
@@ -175,8 +177,13 @@ def show_detail_info(file_path, unsafe_arr, block_arr, cycref_arr, weakified_arr
     if show_more:
         arr_len = len(block_arr)
 
+    if show_file_path:
+        print_name = file_path
+    else:
+        print_name = file_name(file_path)
+
     if arr_len:
-        print file_name(file_path)
+        print print_name
         print "All  Block Lines: %s" % block_arr
         print "Self-Block Lines: %s" % cycref_arr
         print "Weak-Block Lines: %s" % weakified_arr
@@ -194,6 +201,8 @@ def main():
     global show_detail
     global show_more
     global show_singleton
+    global show_file_path
+
     for arg in sys.argv:
         if arg=="--detail":
             show_detail=1
@@ -201,27 +210,39 @@ def main():
             show_more=1
         elif arg=="--show-singleton":
             show_singleton=1
+        elif arg=="--show-filepath":
+            show_file_path=1
 
     if os.path.isdir(root_path):
         total_risk_block_count=0
         total_file_count=0
         for file_path in scan_files(root_path, None, ".m"):
-            risk_arr=detect_block(file_path)
+            risk_arr     = detect_block(file_path)
             risk_arr_len = len(risk_arr)
             if risk_arr_len:
-                total_file_count=total_file_count+1
-                total_risk_block_count=total_risk_block_count+risk_arr_len
+                total_file_count       = total_file_count+1
+                total_risk_block_count = total_risk_block_count+risk_arr_len
+
+                if show_file_path:
+                    print_name = file_path
+                else:
+                    print_name = file_name(file_path)
 
                 if not show_detail:
-                    print "%s --> %s" % (file_name(file_path), risk_arr)
+                    print "%s --> %s" % (print_name, risk_arr)
 
         print "\nTotal Risk File Count: %d, Total Risk Line Count: %s" % (total_file_count, total_risk_block_count)
     else:
         risk_arr=detect_block(root_path)
         risk_arr_len = len(risk_arr)
 
+        if show_file_path:
+            print_name = file_path
+        else:
+            print_name = file_name(file_path)
+
         if not show_detail:
-            print "%s --> %s" % (file_name(root_path), risk_arr)
+            print "%s --> %s" % (print_name, risk_arr)
 
         print "\nTotal Risk Line Count: %s" % risk_arr_len
 
