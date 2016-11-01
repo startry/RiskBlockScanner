@@ -22,8 +22,8 @@ singleton_regex=ur"(\+\s?\(.*\)\s?(shared|default).*{?|.*SINGLETON\_FOR\_CLASS\(
 ignore_regex=ur"(mas_.*Constraints\:|enumerateObjectsUsingBlock\:|enumerateAttribute\:)"
 
 ## Multi-lines case is hard to cover. 
-break_line_start_regex=ur"(self\..*\=|\[self.*)"
-break_line_end_regex=ur"\^(\(.*\))?.*\{"
+block_line_start_regex=ur"(self\..*\=|\[self.*)"
+block_line_end_regex=ur"\^(\(.*\))?.*\{"
 
 show_detail=0
 show_more=0
@@ -85,7 +85,7 @@ def detect_block(file_path):
                 weak_arr.append(line_count)
             elif re.findall(func_regex, line):
                 func_arr.append(line_count)
-            elif re.findall(break_line_start_regex, line):
+            elif re.findall(block_line_start_regex, line):
                 if re.findall(block_regex, line):
                     block_arr.append(line_count);
 
@@ -100,7 +100,7 @@ def detect_block(file_path):
                     potential_blc = line_count
 
             if potential_blc > 0:
-                if re.findall(break_line_end_regex, line):
+                if re.findall(block_line_end_regex, line):
                     potential_arr.append(line_count);
                     block_arr.append(line_count);
                     bracket_map[line_count] = left_bracket_count(line);
