@@ -10,6 +10,14 @@
 #import "STRetainTestViewController.h"
 #import <libextobjc/EXTScope.h>
 
+typedef void (^STTestBlock) (NSString *backStr);
+
+@interface STBlockViewController()
+
+@property (nonatomic, weak) STTestBlock savedBlock;
+
+@end
+
 @implementation STBlockViewController
 
 - (void) viewDidLoad {
@@ -83,7 +91,8 @@
 }
 
 - (void) blockCallback:(void (^)(NSString * backStr)) callback {
-    callback(@"test");
+    self.savedBlock = callback;
+    self.savedBlock(@"test");
 }
 
 - (void) doAnyThing {
